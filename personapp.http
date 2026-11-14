@@ -1,0 +1,149 @@
+# Peticiones de prueba de la API (extensión REST Client de VS Code o IntelliJ).
+# Requiere la API en marcha: docker compose up -d --build
+@host = http://localhost:3000/api/v1
+
+### ---------- Persona ----------
+### Listar personas (MariaDB)
+GET {{host}}/persona/maria
+
+### Listar personas (MongoDB)
+GET {{host}}/persona/mongo
+
+### Consultar una persona
+GET {{host}}/persona/maria/123456789
+
+### Crear persona
+POST {{host}}/persona
+Content-Type: application/json
+
+{
+  "dni": "700000001",
+  "firstName": "Ana",
+  "lastName": "Lopez",
+  "age": "25",
+  "sex": "F",
+  "database": "maria"
+}
+
+### Actualizar persona (el id va en la URL)
+PUT {{host}}/persona/maria/700000001
+Content-Type: application/json
+
+{
+  "firstName": "Ana Maria",
+  "lastName": "Lopez",
+  "age": "26",
+  "sex": "F",
+  "database": "maria"
+}
+
+### Eliminar persona (también borra sus teléfonos y estudios)
+DELETE {{host}}/persona/maria/700000001
+
+### ---------- Profesión ----------
+### Listar profesiones
+GET {{host}}/profesion/mongo
+
+### Crear profesión
+POST {{host}}/profesion
+Content-Type: application/json
+
+{
+  "id": "10",
+  "nombre": "Arquitecto",
+  "descripcion": "Diseña edificios",
+  "database": "maria"
+}
+
+### Actualizar profesión
+PUT {{host}}/profesion/maria/10
+Content-Type: application/json
+
+{
+  "nombre": "Arquitecto Senior",
+  "descripcion": "Diseña edificios",
+  "database": "maria"
+}
+
+### Eliminar profesión (también borra sus estudios)
+DELETE {{host}}/profesion/maria/10
+
+### ---------- Teléfono ----------
+### Listar teléfonos
+GET {{host}}/telefono/maria
+
+### Crear teléfono (el dueño debe existir)
+POST {{host}}/telefono
+Content-Type: application/json
+
+{
+  "numero": "3000000001",
+  "operador": "Claro",
+  "duenio": "147258369",
+  "database": "maria"
+}
+
+### Actualizar teléfono
+PUT {{host}}/telefono/maria/3000000001
+Content-Type: application/json
+
+{
+  "operador": "Tigo",
+  "duenio": "147258369",
+  "database": "maria"
+}
+
+### Eliminar teléfono
+DELETE {{host}}/telefono/maria/3000000001
+
+### ---------- Estudio (clave compuesta: persona + profesión) ----------
+### Listar estudios
+GET {{host}}/estudio/mongo
+
+### Consultar un estudio
+GET {{host}}/estudio/maria/123456789/1
+
+### Crear estudio
+POST {{host}}/estudio
+Content-Type: application/json
+
+{
+  "dniPersona": "147258369",
+  "idProfesion": "2",
+  "fecha": "2019-01-01",
+  "universidad": "Universidad de prueba",
+  "database": "maria"
+}
+
+### Actualizar estudio
+PUT {{host}}/estudio/maria/147258369/2
+Content-Type: application/json
+
+{
+  "fecha": "2019-02-02",
+  "universidad": "Universidad editada",
+  "database": "maria"
+}
+
+### Eliminar estudio
+DELETE {{host}}/estudio/maria/147258369/2
+
+### ---------- Errores esperados ----------
+### Base de datos inválida (400)
+GET {{host}}/persona/oracle
+
+### Persona inexistente (404)
+GET {{host}}/persona/maria/999999999
+
+### Persona duplicada (409)
+POST {{host}}/persona
+Content-Type: application/json
+
+{
+  "dni": "123456789",
+  "firstName": "Duplicada",
+  "lastName": "X",
+  "age": "1",
+  "sex": "M",
+  "database": "maria"
+}

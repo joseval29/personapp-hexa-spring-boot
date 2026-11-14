@@ -89,6 +89,26 @@ Cada entidad (Persona, Profesión, Teléfono, Estudio) tiene su puerto de entrad
 puerto de salida con dos implementaciones (MariaDB y MongoDB). El adaptador REST elige la base de datos
 según el parámetro `{database}` de la URL (`maria` o `mongo`).
 
+### Estructura del proyecto
+
+```
+personapp-hexa-spring-boot/
+├── pom.xml                   # padre Maven (Spring Boot 4.1.2, Java 25)
+├── Dockerfile                # build multietapa (MODULE=rest-input-adapter | cli-input-adapter)
+├── docker-compose.yml        # MariaDB, MongoDB, mongo-init, api y cli
+├── personapp.http            # peticiones de prueba (REST Client)
+├── docker/mongo-init.sh      # carga el DDL y DML de MongoDB al levantar el stack
+├── scripts/                  # DDL y DML de MariaDB y MongoDB
+├── tests/run-integration-tests.sh
+├── common/                   # anotaciones, excepciones, DatabaseOption, PersistenceRegistry, Entrada
+├── domain/                   # modelo: Person, Phone, Profession, Study
+├── application/              # puertos (port/in, port/out) y casos de uso (usecase)
+├── maria-output-adapter/     # JPA: entidades, repositorios y mappers de MariaDB
+├── mongo-output-adapter/     # Spring Data MongoDB: documentos, repositorios y mappers
+├── rest-input-adapter/       # API REST (controllers, adapters, mappers, DTOs, configuración)
+└── cli-input-adapter/        # menú de consola (terminal/menu, adapter, mapper)
+```
+
 ## 3. Configuración del ambiente (ejecución local, sin Docker)
 
 Solo si no vas a usar Docker. Con Docker, `docker compose up` hace todo lo de esta sección.
@@ -189,6 +209,8 @@ El menú principal permite elegir el módulo (Personas, Profesiones, Teléfonos,
 persistencia (MariaDB o MongoDB) y después las operaciones: ver todos, buscar, crear, editar y eliminar.
 
 ## 6. Endpoints REST
+
+En el archivo `personapp.http` (raíz del repo) están las peticiones de cada endpoint para probarlas desde VS Code (extensión *REST Client*) o IntelliJ.
 
 `{database}` puede ser `maria` o `mongo`. Cualquier otro valor responde **400**.
 
@@ -303,3 +325,15 @@ tests/run-integration-tests.sh   # levanta Docker Compose y corre 17 pruebas de 
 ## 10. Pendiente
 
 - Documento final de la entrega (portada, marco conceptual, diseño, procedimiento, conclusiones y referencias).
+
+## 11. Versionamiento y entrega
+
+```bash
+git add -A
+git commit -m "Mensaje del cambio"
+git push origin feature/crud-hexa-docker      # o la rama que uses
+git tag -a v1.0.0 -m "Entrega del laboratorio"
+git push origin v1.0.0
+```
+
+La URL de la entrega es el repositorio con el tag `v1.0.0` en la rama principal.

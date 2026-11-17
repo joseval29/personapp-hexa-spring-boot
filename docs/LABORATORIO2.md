@@ -479,16 +479,6 @@ Trabajamos en macOS con chip Apple Silicon. Se usó Docker Desktop para las base
 | MariaDB | latest (probado con 13.0.2) | Base relacional |
 | MongoDB | latest (probado con 9.0.4) | Base documental |
 
-**Paso 0. Errores al correr la plantilla original.** Antes de modificar el código se intentó compilar y ejecutar la plantilla tal como estaba. Se encontraron los siguientes problemas:
-
-| Error | Causa | Solución |
-|---|---|---|
-| `NoSuchFieldError` al compilar con JDK 21 | Lombok 1.18.26 no es compatible con ese compilador | Compilar con JDK 11, como indica la guía. Después se migró a JDK 25 con Lombok 1.18.48 |
-| `package org.slf4j does not exist` al pasar a JDK 25 | La dependencia de logging quedó incompleta al quitar `log4j-to-slf4j` | Agregar `slf4j-api` en el `pom` raíz |
-| El `.jar` no arranca con `java -jar` | El `pom` no hereda el padre de Spring Boot y no define `Main-Class` | Para la comparación se ejecutó con `java -cp` y el classpath de `mvn dependency:build-classpath`. Luego se corrigió el empaquetado |
-| Fallos al resolver `${revision}` en los módulos | Maven no resolvía la versión heredada en algunos módulos | Se usó el mismo workaround con el classpath mientras se corregía el `pom` |
-| `Access denied for user 'persona_db'` desde la aplicación | La instancia local de MariaDB tenía un usuario anónimo (`''`) que tomaba precedencia | Se eliminó el usuario anónimo en el ambiente local |  
-
 **Paso 1. Revisión de la plantilla.** Se hizo un fork del repositorio plantilla de la materia y se revisó su código. Con JDK 11 compilaba; con JDK 21 fallaba porque Lombok 1.18.26 no es compatible con ese compilador.
 
 **Paso 2. Migración.** Se migró a JDK 25 y Spring Boot 4.1.2 porque se pidió usar las versiones más recientes. Esto implicó cambiar `javax.persistence` por `jakarta.persistence`, reemplazar `spring-boot-starter-web` por `spring-boot-starter-webmvc` y actualizar springdoc.

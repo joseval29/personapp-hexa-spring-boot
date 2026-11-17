@@ -18,6 +18,15 @@ public final class Consola {
 		}
 	}
 
+	public static int leerEnteroPositivo(Scanner keyboard, String mensaje) {
+		while (true) {
+			int numero = leerEntero(keyboard, mensaje);
+			if (numero > 0)
+				return numero;
+			System.out.println("El número debe ser mayor a 0.");
+		}
+	}
+
 	public static String leerTexto(Scanner keyboard, String mensaje) {
 		System.out.print(mensaje);
 		return keyboard.nextLine().trim();

@@ -61,7 +61,7 @@ public class PersonaMenu extends MenuBase {
 	}
 
 	private Integer leerId() {
-		return Consola.leerEntero(keyboard, "Cédula: ");
+		return Consola.leerEnteroPositivo(keyboard, "Cédula: ");
 	}
 
 	private Gender leerGenero() {
@@ -77,6 +77,18 @@ public class PersonaMenu extends MenuBase {
 
 	private Integer leerEdad() {
 		String e = Consola.leerOpcional(keyboard, "Edad (vacío para omitir): ");
-		return e == null ? null : Integer.valueOf(e);
+		if (e == null)
+			return null;
+		try {
+			int edad = Integer.parseInt(e);
+			if (edad < 0 || edad > 150) {
+				System.out.println("La edad debe estar entre 0 y 150.");
+				return leerEdad();
+			}
+			return edad;
+		} catch (NumberFormatException ex) {
+			System.out.println("La edad debe ser un número válido.");
+			return leerEdad();
+		}
 	}
 }
